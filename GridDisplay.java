@@ -1,4 +1,5 @@
 import java.util.concurrent.ArrayBlockingQueue;
+import java.io.PrintWriter;
 
 class GridDisplay implements Runnable {
     public static record Frame(String[] positions, int gridWidth) {}
@@ -8,6 +9,9 @@ class GridDisplay implements Runnable {
     private volatile boolean running = true;
 
     private final int frameDelayMs = 100;
+
+    // Avoid auto-flushing to prevent flickering
+    private static final PrintWriter writer = new PrintWriter(System.out, false);
 
     @Override
     public void run() {
@@ -44,18 +48,18 @@ class GridDisplay implements Runnable {
 
     private void moveUp(int l) {
         if (l < 0) return;
-        System.out.print("\033[" + l + "A\r");
+        writer.print("\033[" + l + "A\r");
     }
 
     private void displayFrame(String[] positions, int gridWidth) {
         for (int i = 0; i < positions.length; i++) {
-            if (i != 0 && i % gridWidth == 0) System.out.print("\n");
+            if (i != 0 && i % gridWidth == 0) writer.print("\n");
             
             String c = positions[i];
-            System.out.print(c == null || c.isBlank() ? " • " : " " + c + " ");
+            writer.print(c == null || c.isBlank() ? " • " : " " + c + " ");
         }
-        System.out.println();
-        System.out.flush();
+        writer.println();
+        writer.flush();
     }
 
     private void updateDisplay(String[] positions, int gridWidth) {
