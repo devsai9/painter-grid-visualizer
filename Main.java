@@ -3,10 +3,12 @@ public class Main {
         GridEngine ge = new GridEngine();
 
         PainterPlus p = new PainterPlus(ge);
+        PainterPlus p2 = new PainterPlus(ge, 2, 2, Direction.NORTH);
 
         ge.updateDisplay();
 
         p.moveTo(9, 9);
+        p2.moveTo(6, 7);
 
         ge.updateDisplay();
 

@@ -11,6 +11,22 @@ class Painter extends GridDisplayObject {
         ge.registerEntity(this);
     }
 
+    @Override
+    public String getSprite() {
+        return getDirection().getEmoji();
+    }
+
+    @Override
+    public int getRenderingLayer() {
+        return 99;
+    }
+
+    @Override
+    public boolean isPassable() {
+        // Feature to come: Collision detection
+        return true;
+    }
+
     public boolean canMove() {
         return ge.canMove(this);
     }
