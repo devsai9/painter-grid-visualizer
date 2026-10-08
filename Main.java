@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        GridEngine ge = new GridEngine();
+        GridEngine ge = GridEngine.getInstance();
 
         PainterPlus p = new PainterPlus(ge);
         PainterPlus p2 = new PainterPlus(ge, 2, 2, Direction.NORTH);

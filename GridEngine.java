@@ -5,16 +5,13 @@ import java.util.UUID;
 public class GridEngine {
     public static final int GRID_WIDTH = 10;
     
-    private static GridEngine _instance = null;
+    private static GridEngine instance = null;
 
     private static HashMap<UUID, Position2D> positions;
     private static HashMap<UUID, GridDisplayObject> gridObjects;
     private static GridDisplay display;
 
-    public GridEngine() {
-        if (_instance != null) throw new RuntimeException("Cannot instantiate multiple GridEngines");
-        else _instance = this;
-
+    private GridEngine() {
         positions = new HashMap<>();
         gridObjects = new HashMap<>();
 
@@ -25,31 +22,37 @@ public class GridEngine {
         System.out.println("Initialized GridEngine");
     }
 
+    public static GridEngine getInstance() {
+        if (instance == null) instance = new GridEngine();
+
+        return instance;
+    }
+
     // May do nothing if n.getUUID() is already on the Grid.
-    public void registerEntity(GridDisplayObject n) {
+    public static void registerEntity(GridDisplayObject n) {
         positions.putIfAbsent(n.getUUID(), new Position2D(0, 0, Direction.EAST));
         gridObjects.putIfAbsent(n.getUUID(), n);
     }
 
-    public void registerEntity(GridDisplayObject n, Position2D pos) {
+    public static void registerEntity(GridDisplayObject n, Position2D pos) {
         positions.putIfAbsent(n.getUUID(), pos);
         gridObjects.putIfAbsent(n.getUUID(), n);
     }
 
     // May do nothing if n.getUUID() is not on the grid.
-    public void unregisterEntity(GridDisplayObject n) {
+    public static void unregisterEntity(GridDisplayObject n) {
         positions.remove(n.getUUID());
         gridObjects.remove(n.getUUID());
     }
 
-    public Position2D retrievePosition(GridDisplayObject n) {
+    public static Position2D retrievePosition(GridDisplayObject n) {
         UUID uuid = n.getUUID();
         Position2D curr = positions.get(uuid);
 
         return curr;
     }
 
-    public boolean canMove(GridDisplayObject n) {
+    public static boolean canMove(GridDisplayObject n) {
         Position2D received = retrievePosition(n);
         if (received == null) throw new RuntimeException("Invalid UUID");
 
@@ -65,7 +68,7 @@ public class GridEngine {
         return false;
     }
 
-    public void requestMove(GridDisplayObject n) {
+    public static void requestMove(GridDisplayObject n) {
         if (!canMove(n)) throw new RuntimeException("Cannot move UUID " + n.getUUID() + " in current position");
         
         Position2D received = retrievePosition(n);
@@ -79,7 +82,7 @@ public class GridEngine {
         updateDisplay();
     }
 
-    public void requestLeftTurn(GridDisplayObject n) {
+    public static void requestLeftTurn(GridDisplayObject n) {
         Position2D received = retrievePosition(n);
         if (received == null) throw new RuntimeException("Invalid UUID");
 
@@ -88,7 +91,7 @@ public class GridEngine {
         updateDisplay();
     }
 
-    public String[] gridToStringArr() {
+    public static String[] gridToStringArr() {
         UUID[] uuids = positions.keySet().toArray(new UUID[0]);
 
         UUID[] newGridPositions = new UUID[GRID_WIDTH * GRID_WIDTH];
@@ -117,15 +120,15 @@ public class GridEngine {
         return ret;
     }
 
-    public void updateDisplay() {
+    public static void updateDisplay() {
         display.submitFrame(gridToStringArr(), GRID_WIDTH);
     }
 
-    public boolean rendererIsDone() {
+    public static boolean rendererIsDone() {
         return display.bufferEmpty();
     }
 
-    public void stopRenderer() {
+    public static void stopRenderer() {
         display.stop();
     }
 }
